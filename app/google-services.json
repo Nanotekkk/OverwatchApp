@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "474534489289",
+    "project_id": "overwatchapp-f3530",
+    "storage_bucket": "overwatchapp-f3530.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:474534489289:android:1075998e90756ae3ffb118",
+        "android_client_info": {
+          "package_name": "com.example.overwatchapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-4FPM_tAC5bDdY6Bciw2bdZFFX4NVVmY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
