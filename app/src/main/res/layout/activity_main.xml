@@ -6,12 +6,15 @@
     android:gravity="center"
     android:padding="16dp">
 
+    <include layout="@layout/toolbar" />
+
     <ImageView
         android:id="@+id/heroImage"
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:src="@drawable/ic_hero_placeholder"
-        android:contentDescription="Hero image" />
+        android:contentDescription="Hero image"
+        android:layout_marginTop="16dp" />
 
     <TextView
         android:id="@+id/heroName"

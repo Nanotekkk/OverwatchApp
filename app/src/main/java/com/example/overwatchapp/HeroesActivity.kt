@@ -1,6 +1,8 @@
 package com.example.overwatchapp
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +16,13 @@ class HeroesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_heroes)
 
         repo = FavoritesRepository(this)
+
+        val toolbarTitle = findViewById<TextView>(R.id.toolbarTitle)
+        toolbarTitle.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            startActivity(intent)
+        }
 
         val recycler = findViewById<RecyclerView>(R.id.recyclerHeroes)
         recycler.layoutManager = LinearLayoutManager(this)
