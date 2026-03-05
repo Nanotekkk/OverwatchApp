@@ -1,9 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     // Add the dependency for the Google services Gradle plugin
-    id("com.android.application")
     id("com.google.gms.google-services")
-    kotlin("android")
 }
 
 android {
