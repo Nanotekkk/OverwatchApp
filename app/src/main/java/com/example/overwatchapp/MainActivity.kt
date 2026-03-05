@@ -44,6 +44,8 @@ class MainActivity : AppCompatActivity() {
             heroes.shuffled().firstOrNull()
         }
 
+        
+
         hero?.let {
             currentHeroId = it.id
             heroName.text = it.name
