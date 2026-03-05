@@ -21,14 +21,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "daily_channel",
-                "Daily Notifications",
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            manager.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(
+            "daily_channel",
+            "Daily Notifications",
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        manager.createNotificationChannel(channel)
 
         val notification = NotificationCompat.Builder(this, "daily_channel")
             .setContentTitle(title)
