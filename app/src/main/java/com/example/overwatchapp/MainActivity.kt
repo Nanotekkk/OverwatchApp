@@ -2,17 +2,32 @@ package com.example.overwatchapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity() {
+
     private var currentHeroId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // 🔥 Récupération du token Firebase
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("FCM", "Token error", task.exception)
+                    return@addOnCompleteListener
+                }
+
+                val token = task.result
+                Log.d("FCM_TOKEN", token)
+            }
 
         val toolbarTitle = findViewById<TextView>(R.id.toolbarTitle)
         val heroImage = findViewById<ImageView>(R.id.heroImage)
@@ -38,9 +53,7 @@ class MainActivity : AppCompatActivity() {
             heroImage.setImageResource(R.drawable.ic_hero_placeholder)
         }
 
-        // Clicking on toolbar title will reset the daily hero (refresh)
         toolbarTitle.setOnClickListener {
-            // pick another random hero
             val newHero = heroes.shuffled().firstOrNull()
             newHero?.let {
                 currentHeroId = it.id
