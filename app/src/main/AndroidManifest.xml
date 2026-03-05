@@ -21,6 +21,9 @@
             </intent-filter>
         </activity>
 
+        <!-- Secondary activity: heroes list -->
+        <activity android:name=".HeroesActivity" />
+
     </application>
 
 </manifest>
