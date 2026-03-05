@@ -40,7 +40,5 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
 
         println("FCM_TOKEN: $token")
-
-        // Ici tu peux envoyer le token à ton serveur si besoin
     }
 }
