@@ -7,9 +7,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class HeroesActivity : AppCompatActivity() {
     private lateinit var repo: FavoritesRepository
+    private lateinit var recycler: RecyclerView
+    private val activityJob: Job = SupervisorJob()
+    private val activityScope = CoroutineScope(Dispatchers.Main + activityJob)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,12 +33,23 @@ class HeroesActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val recycler = findViewById<RecyclerView>(R.id.recyclerHeroes)
+        recycler = findViewById(R.id.recyclerHeroes)
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
-        val heroes = DataSource.getHeroes()
-        val adapter = HeroAdapter(heroes.toMutableList(), repo)
-        recycler.adapter = adapter
+        activityScope.launch {
+            val heroes = DataSource.getHeroes()
+            val adapter = HeroAdapter(heroes.toMutableList(), repo) { hero ->
+                val intent = Intent(this@HeroesActivity, HeroDetailActivity::class.java)
+                intent.putExtra(HeroDetailActivity.EXTRA_HERO_ID, hero.id)
+                startActivity(intent)
+            }
+            recycler.adapter = adapter
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activityScope.cancel()
     }
 }

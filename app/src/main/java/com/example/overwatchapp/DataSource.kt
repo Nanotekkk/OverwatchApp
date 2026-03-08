@@ -1,7 +1,18 @@
 package com.example.overwatchapp
 
 object DataSource {
-    fun getHeroes(): List<Hero> {
+    private val repository = OverwatchRepository()
+
+    suspend fun getHeroes(): List<Hero> {
+        return try {
+            val remoteHeroes = repository.getHeroes()
+            if (remoteHeroes.isNotEmpty()) remoteHeroes else getFallbackHeroes()
+        } catch (_: Exception) {
+            getFallbackHeroes()
+        }
+    }
+
+    private fun getFallbackHeroes(): List<Hero> {
         return listOf(
             Hero("ana", "Ana", R.drawable.ic_hero_placeholder),
             Hero("ashe", "Ashe", R.drawable.ic_hero_placeholder),

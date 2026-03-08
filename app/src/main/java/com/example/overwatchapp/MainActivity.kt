@@ -7,11 +7,21 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import coil.load
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private var currentHeroId: String? = null
+    private val activityJob: Job = SupervisorJob()
+    private val activityScope = CoroutineScope(Dispatchers.Main + activityJob)
+    private var heroes: List<Hero> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,25 +44,29 @@ class MainActivity : AppCompatActivity() {
         val heroName = findViewById<TextView>(R.id.heroName)
         val openListButton = findViewById<Button>(R.id.openHeroesButton)
 
-        val heroes = DataSource.getHeroes()
-
-        // Restore or pick a random hero
         currentHeroId = savedInstanceState?.getString("currentHeroId")
-        val hero = if (currentHeroId != null) {
-            heroes.firstOrNull { it.id == currentHeroId } ?: heroes.firstOrNull()
-        } else {
-            heroes.shuffled().firstOrNull()
-        }
+        heroName.text = "Chargement..."
+        heroImage.setImageResource(R.drawable.ic_hero_placeholder)
 
-        
+        activityScope.launch {
+            heroes = DataSource.getHeroes()
+            val hero = if (currentHeroId != null) {
+                heroes.firstOrNull { it.id == currentHeroId } ?: heroes.firstOrNull()
+            } else {
+                heroes.shuffled().firstOrNull()
+            }
 
-        hero?.let {
-            currentHeroId = it.id
-            heroName.text = it.name
-            heroImage.setImageResource(it.imageRes)
-        } ?: run {
-            heroName.text = "Aucun héros"
-            heroImage.setImageResource(R.drawable.ic_hero_placeholder)
+            hero?.let {
+                currentHeroId = it.id
+                heroName.text = it.name
+                heroImage.load(it.imageUrl) {
+                    placeholder(it.imageRes)
+                    error(it.imageRes)
+                }
+            } ?: run {
+                heroName.text = "Aucun héros"
+                heroImage.setImageResource(R.drawable.ic_hero_placeholder)
+            }
         }
 
         toolbarTitle.setOnClickListener {
@@ -60,7 +74,10 @@ class MainActivity : AppCompatActivity() {
             newHero?.let {
                 currentHeroId = it.id
                 heroName.text = it.name
-                heroImage.setImageResource(it.imageRes)
+                heroImage.load(it.imageUrl) {
+                    placeholder(it.imageRes)
+                    error(it.imageRes)
+                }
             }
         }
 
@@ -73,5 +90,10 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("currentHeroId", currentHeroId)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activityScope.cancel()
     }
 }

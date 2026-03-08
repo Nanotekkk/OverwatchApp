@@ -6,10 +6,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 
 class HeroAdapter(
     private val items: MutableList<Hero>,
-    private val repo: FavoritesRepository
+    private val repo: FavoritesRepository,
+    private val onHeroClick: (Hero) -> Unit
 ) : RecyclerView.Adapter<HeroAdapter.HeroViewHolder>() {
 
     inner class HeroViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -26,7 +28,10 @@ class HeroAdapter(
     override fun onBindViewHolder(holder: HeroViewHolder, position: Int) {
         val hero = items[position]
         holder.name.text = hero.name
-        holder.image.setImageResource(hero.imageRes)
+        holder.image.load(hero.imageUrl) {
+            placeholder(hero.imageRes)
+            error(hero.imageRes)
+        }
         holder.fav.setImageResource(
             if (repo.isFavorite(hero.id)) R.drawable.ic_star_filled else R.drawable.ic_star_outline
         )
@@ -34,6 +39,10 @@ class HeroAdapter(
         holder.fav.setOnClickListener {
             repo.toggleFavorite(hero.id)
             notifyItemChanged(position)
+        }
+
+        holder.itemView.setOnClickListener {
+            onHeroClick(hero)
         }
     }
 

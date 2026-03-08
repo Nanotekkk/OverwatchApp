@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+
     xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -20,6 +22,7 @@
 
         <!-- Secondary activity: heroes list -->
         <activity android:name=".HeroesActivity" />
+        <activity android:name=".HeroDetailActivity" />
 
         <service
             android:name=".MyFirebaseMessagingService"
