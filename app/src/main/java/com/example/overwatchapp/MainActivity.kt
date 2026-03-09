@@ -15,13 +15,23 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        private const val PREFS_FEATURED_HERO = "featured_hero"
+        private const val KEY_FEATURED_DATE = "featured_date"
+        private const val KEY_FEATURED_HERO_ID = "featured_hero_id"
+    }
 
     private var currentHeroId: String? = null
     private val activityJob: Job = SupervisorJob()
     private val activityScope = CoroutineScope(Dispatchers.Main + activityJob)
     private var heroes: List<Hero> = emptyList()
+    private val featuredPrefs by lazy { getSharedPreferences(PREFS_FEATURED_HERO, MODE_PRIVATE) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,11 +60,7 @@ class MainActivity : AppCompatActivity() {
 
         activityScope.launch {
             heroes = DataSource.getHeroes()
-            val hero = if (currentHeroId != null) {
-                heroes.firstOrNull { it.id == currentHeroId } ?: heroes.firstOrNull()
-            } else {
-                heroes.shuffled().firstOrNull()
-            }
+            val hero = getFeaturedHeroForToday(heroes)
 
             hero?.let {
                 currentHeroId = it.id
@@ -70,8 +76,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         toolbarTitle.setOnClickListener {
-            val newHero = heroes.shuffled().firstOrNull()
-            newHero?.let {
+            val featuredHero = getFeaturedHeroForToday(heroes)
+            featuredHero?.let {
                 currentHeroId = it.id
                 heroName.text = it.name
                 heroImage.load(it.imageUrl) {
@@ -95,5 +101,33 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         activityScope.cancel()
+    }
+
+    private fun getFeaturedHeroForToday(items: List<Hero>): Hero? {
+        if (items.isEmpty()) return null
+
+        val today = getTodayKey()
+        val savedDate = featuredPrefs.getString(KEY_FEATURED_DATE, null)
+        val savedHeroId = featuredPrefs.getString(KEY_FEATURED_HERO_ID, null)
+
+        if (savedDate == today && !savedHeroId.isNullOrBlank()) {
+            items.firstOrNull { it.id == savedHeroId }?.let { return it }
+        }
+
+        // Deterministic pick for the day, then persisted for full-day stability.
+        val nonNegativeHash = today.hashCode().toLong() and 0x7fffffff
+        val index = (nonNegativeHash % items.size).toInt()
+        val featuredHero = items[index]
+
+        featuredPrefs.edit()
+            .putString(KEY_FEATURED_DATE, today)
+            .putString(KEY_FEATURED_HERO_ID, featuredHero.id)
+            .apply()
+
+        return featuredHero
+    }
+
+    private fun getTodayKey(): String {
+        return SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
     }
 }

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_screen_gradient"
     android:orientation="vertical">
 
     <include layout="@layout/toolbar" />
@@ -14,6 +15,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_surface_card"
+            android:elevation="3dp"
+            android:padding="20dp"
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
@@ -22,6 +26,9 @@
                 android:layout_width="180dp"
                 android:layout_height="180dp"
                 android:contentDescription="Hero portrait"
+                android:background="@drawable/bg_portrait_frame"
+                android:clipToOutline="true"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_hero_placeholder" />
 
             <TextView
@@ -30,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="Nom"
+                android:textColor="@color/text_primary_light"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
@@ -39,6 +47,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="Rôle"
+                android:textColor="@color/text_primary_light"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -46,14 +56,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Stats" />
+                android:text="Stats"
+                android:textColor="@color/text_primary_light" />
 
             <TextView
                 android:id="@+id/detailHeroLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Localisation" />
+                android:text="Localisation"
+                android:textColor="@color/text_primary_light" />
 
             <TextView
                 android:id="@+id/detailHeroDescription"
@@ -61,7 +73,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="Description"
-                android:lineSpacingExtra="2dp" />
+                android:textColor="@color/text_primary_light"
+                android:lineSpacingExtra="4dp" />
 
         </LinearLayout>
     </ScrollView>

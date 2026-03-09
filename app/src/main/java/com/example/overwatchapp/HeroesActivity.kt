@@ -25,6 +25,7 @@ class HeroesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_heroes)
 
         repo = FavoritesRepository(this)
+        
 
         val toolbarTitle = findViewById<TextView>(R.id.toolbarTitle)
         toolbarTitle.setOnClickListener {
